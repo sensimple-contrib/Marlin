@@ -57,12 +57,12 @@
 #
 
 # This defines the board to compile for (see boards.h for your board's ID)
-HARDWARE_MOTHERBOARD ?= 11
+HARDWARE_MOTHERBOARD ?= 1020 #RAMPS 1.4 HFB
 
 # Arduino source install directory, and version number
 # On most linuxes this will be /usr/share/arduino
 ARDUINO_INSTALL_DIR  ?= ${HOME}/Arduino
-ARDUINO_VERSION      ?= 106
+ARDUINO_VERSION      ?= 10810
 
 # The installed Libraries are in the User folder
 ARDUINO_USER_DIR ?= ${HOME}/Arduino
@@ -71,14 +71,14 @@ ARDUINO_USER_DIR ?= ${HOME}/Arduino
 AVR_TOOLS_PATH ?=
 
 #Programmer configuration
-UPLOAD_RATE        ?= 57600
+UPLOAD_RATE        ?= 115200
 AVRDUDE_PROGRAMMER ?= arduino
 # on most linuxes this will be /dev/ttyACM0 or /dev/ttyACM1
 UPLOAD_PORT        ?= /dev/ttyUSB0
 
 #Directory used to build files in, contains all the build files, from object files to the final hex file
 #on linux it is best to put an absolute path like /home/username/tmp .
-BUILD_DIR          ?= applet
+BUILD_DIR          ?= build
 
 # This defines whether Liquid_TWI2 support will be built
 LIQUID_TWI2        ?= 0
@@ -87,10 +87,10 @@ LIQUID_TWI2        ?= 0
 WIRE               ?= 0
 
 # this defines if U8GLIB is needed (may require RELOC_WORKAROUND)
-U8GLIB             ?= 1
+U8GLIB             ?= 0
 
 # this defines whether to include the Trinamic TMCStepper library
-TMC                ?= 1
+TMC                ?= 0
 
 # this defines whether to include the AdaFruit NeoPixel library
 NEOPIXEL           ?= 0
@@ -704,14 +704,15 @@ CSTANDARD = -std=gnu99
 CXXSTANDARD = -std=gnu++11
 CDEBUG = -g$(DEBUG)
 CWARN   = -Wall -Wstrict-prototypes -Wno-packed-bitfield-compat -Wno-pragmas -Wunused-parameter
-CXXWARN = -Wall                     -Wno-packed-bitfield-compat -Wno-pragmas -Wunused-parameter
+CXXWARN = -Wall                     -Wno-packed-bitfield-compat -Wno-pragmas -Wunused-parameter -Wmaybe-uninitialized -Wunused-variable
 CTUNING = -fsigned-char -funsigned-bitfields -fno-exceptions \
           -fshort-enums -ffunction-sections -fdata-sections
+
 ifneq ($(HARDWARE_MOTHERBOARD),)
   CTUNING += -DMOTHERBOARD=${HARDWARE_MOTHERBOARD}
 endif
 #CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
-CXXEXTRA = -fno-use-cxa-atexit -fno-threadsafe-statics -fno-rtti
+CXXEXTRA = -fno-use-cxa-atexit -fno-threadsafe-statics -fno-rtti -fpermissive
 CFLAGS := $(CDEBUG) $(CDEFS) $(CINCS) -O$(OPT) $(CEXTRA)   $(CTUNING) $(CSTANDARD)
 CXXFLAGS :=         $(CDEFS) $(CINCS) -O$(OPT) $(CXXEXTRA) $(CTUNING) $(CXXSTANDARD)
 ASFLAGS :=          $(CDEFS)
@@ -776,7 +777,7 @@ $(shell mkdir -p $(dir $(OBJ)))
 # Default target.
 all: sizeafter
 
-build: elf hex bin
+build: elf hex bin eep
 
 elf: $(BUILD_DIR)/$(TARGET).elf
 bin: $(BUILD_DIR)/$(TARGET).bin
@@ -804,7 +805,7 @@ sizebefore:
 	$P if [ -f $(BUILD_DIR)/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(HEXSIZE); echo; fi
 
 sizeafter: build
-	$P if [ -f $(BUILD_DIR)/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_AFTER); $(ELFSIZE); echo; fi
+	$P if [ -f $(BUILD_DIR)/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_AFTER); $(ELFSIZE); $(HEXSIZE); echo; fi
 
 
 # Convert ELF to COFF for use in debugging / simulating in AVR Studio or VMLAB.
@@ -828,15 +829,14 @@ extcoff: $(TARGET).elf
 
 .elf.hex:
 	$(Pecho) "  COPY  $@"
-	$P $(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
+	$P $(OBJCOPY) -O $(FORMAT) -R .eeprom -S $< $@
 
 .elf.bin:
 	$(Pecho) "  COPY  $@"
-	$P $(OBJCOPY) -O binary -R .eeprom $< $@
+	$P $(OBJCOPY) -O binary -R .eeprom -S $< $@
 
 .elf.eep:
-	-$(OBJCOPY) -j .eeprom --set-section-flags=.eeprom="alloc,load" \
-    --change-section-lma .eeprom=0 -O $(FORMAT) $< $@
+	-$(OBJCOPY) -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O $(FORMAT) $< $@
 
 # Create extended listing file from ELF output file.
 .elf.lss:
