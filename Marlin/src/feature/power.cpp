@@ -33,7 +33,9 @@
 #include "../module/stepper/indirection.h"
 #include "../MarlinCore.h"
 
-#include "../gcode/gcode.h"
+#if defined(PSU_POWERUP_GCODE) || defined(PSU_POWEROFF_GCODE)
+  #include "../gcode/gcode.h"
+#endif
 
 #if BOTH(USE_CONTROLLER_FAN, AUTO_POWER_CONTROLLERFAN)
   #include "controllerfan.h"
