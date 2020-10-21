@@ -337,16 +337,18 @@
   #define PSU_POWERUP_GCODE "M355 S1"
   #define PSU_POWEROFF_GCODE "M355 S0"
 
+  #define AUTO_POWER_CONTROL  true    // Enable automatic control of the PS_ON pin
   #if ENABLED(AUTO_POWER_CONTROL)
     #define AUTO_POWER_FANS         // Turn on PSU if fans need power
     #define AUTO_POWER_E_FANS
     #define AUTO_POWER_CONTROLLERFAN
     #define AUTO_POWER_CHAMBER_FAN
-    #define AUTO_POWER_E_TEMP        50 // (°C) Turn on PSU over this temperature
+    #define AUTO_POWER_E_TEMP        70 // (°C) Turn on PSU over this temperature
     //#define AUTO_POWER_CHAMBER_TEMP  30 // (°C) Turn on PSU over this temperature
-    #define POWER_TIMEOUT 120 //minutes
+    #define POWER_TIMEOUT 300 //minutes
   #endif
 #endif
+
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -428,6 +430,7 @@
 #define TEMP_SENSOR_BED 1 //ROBO
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
+
 
 
 #if TEMP_SENSOR_0 == 20
@@ -526,9 +529,12 @@
   //#define DEFAULT_Kd 61.67 //ROBO
 
   //E3D PT100 AMPLIFIER (ultimaker) //M301 P9.90 I1.60 D15.00
-  #define DEFAULT_Kp 9.90
-  #define DEFAULT_Ki 1.60
-  #define DEFAULT_Kd 15.00
+  //#define DEFAULT_Kp 9.90
+  //#define DEFAULT_Ki 1.60
+  //#define DEFAULT_Kd 15.00
+  #define DEFAULT_Kp 31.41
+  #define DEFAULT_Ki 3.00
+  #define DEFAULT_Kd 82.34
 
 #endif // PIDTEMP
 
@@ -578,9 +584,13 @@
   //#define DEFAULT_bedKd 1675.16
 
   // RoBo3D R1/R1+  --M303 results 
-  #define  DEFAULT_bedKp 4.66
-  #define  DEFAULT_bedKi 0.92    
-  #define  DEFAULT_bedKd 15.79
+  //#define  DEFAULT_bedKp 4.66
+  //#define  DEFAULT_bedKi 0.92    
+  //#define  DEFAULT_bedKd 15.79
+
+  #define  DEFAULT_bedKp 39.01
+  #define  DEFAULT_bedKi 7.68    
+  #define  DEFAULT_bedKd 132.08
 
   // RoBo3D R1/R1+  
   //#define  DEFAULT_bedKp 180.09  //--ROBO-BF
@@ -1037,7 +1047,7 @@
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
-#define MIN_PROBE_EDGE 0
+#define PROBING_MARGIN 0
 
 // X and Y axis travel speed (mm/m) between probes
 #define XY_PROBE_SPEED (120 * 60)
@@ -1077,7 +1087,7 @@
 #define Z_CLEARANCE_DEPLOY_PROBE    2 // Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES  2 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     2 // Z Clearance between multiple probes
-#define Z_AFTER_PROBING             0 // Z position after probing is done
+#define Z_AFTER_PROBING             2 // Z position after probing is done
 
 #define Z_PROBE_LOW_POINT          -2 //ROBO   Farthest distance below the trigger-point to go before stopping ( -2 accounts for the additional pressure needed to trigger Z endstops)
 
@@ -1158,7 +1168,7 @@
 #define Z_HOMING_HEIGHT  2      // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING  0      // (mm) Height to move to after homing Z
+#define Z_AFTER_HOMING  2      // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1312,13 +1322,13 @@
   /**
    * Enable the G26 Mesh Validation Pattern tool.
    */
-  //#define G26_MESH_VALIDATION 
+  #define G26_MESH_VALIDATION 
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
     #define MESH_TEST_LAYER_HEIGHT   0.3  // (mm) Default layer height for the G26 Mesh Validation Tool.
     #define MESH_TEST_HOTEND_TEMP  195.0  // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
     #define MESH_TEST_BED_TEMP      50.0  // (°C) Default bed temperature for the G26 Mesh Validation Tool.
-    #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
+    #define G26_XY_FEEDRATE         140    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
     #define G26_RETRACT_MULTIPLIER   0.1  // G26 Q (retraction) used by default between mesh test elements.
   #endif
 
