@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "(Robo3D R1+, SIMPLE)" //ROBO
+#define CUSTOM_MACHINE_NAME "ROBO3D-MARLIN" //ROBO
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like http://www.uuidgenerator.net/version4
@@ -346,7 +346,7 @@
     #define AUTO_POWER_CHAMBER_FAN
     #define AUTO_POWER_E_TEMP        70 // (°C) Turn on PSU over this temperature
     //#define AUTO_POWER_CHAMBER_TEMP  30 // (°C) Turn on PSU over this temperature
-    #define POWER_TIMEOUT 300 //minutes
+    #define POWER_TIMEOUT 15 //minutes
   #endif
 #endif
 
@@ -452,13 +452,13 @@
 //#define TEMP_SENSOR_1_AS_REDUNDANT
 #define MAX_REDUNDANT_TEMP_SENSOR_DIFF 10
 
-#define TEMP_RESIDENCY_TIME     30  // (seconds) Time to wait for hotend to "settle" in M109
-#define TEMP_WINDOW              4  // (°C) Temperature proximity for the "temperature reached" timer
+#define TEMP_RESIDENCY_TIME     15  // (seconds) Time to wait for hotend to "settle" in M109
+#define TEMP_WINDOW              5  // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_HYSTERESIS          5  // (°C) Temperature proximity considered "close enough" to the target
 
-#define TEMP_BED_RESIDENCY_TIME 30  // (seconds) Time to wait for bed to "settle" in M190
-#define TEMP_BED_WINDOW          4  // (°C) Temperature proximity for the "temperature reached" timer
-#define TEMP_BED_HYSTERESIS      10  // (°C) Temperature proximity considered "close enough" to the target
+#define TEMP_BED_RESIDENCY_TIME 10  // (seconds) Time to wait for bed to "settle" in M190
+#define TEMP_BED_WINDOW          5  // (°C) Temperature proximity for the "temperature reached" timer
+#define TEMP_BED_HYSTERESIS     10  // (°C) Temperature proximity considered "close enough" to the target
 
 // Below this temperature the heater will be switched off
 // because it probably indicates a broken thermistor wire.
@@ -522,7 +522,7 @@
   //#define DEFAULT_Ki 2.25
   //#define DEFAULT_Kd 440
 
-  //Robo2D R1/R1+
+  //Robo2D R1/R1+ Hexagon
   //#define DEFAULT_Kp 21.83 //ROBO
   //#define DEFAULT_Ki 1.93  //ROBO
   //#define DEFAULT_Kd 61.67 //ROBO
@@ -603,7 +603,7 @@
   //#define PID_DEBUG             // Sends debug data to the serial port. Use 'M303 D' to toggle activation.
   //#define PID_OPENLOOP          // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
   //#define SLOW_PWM_HEATERS      // PWM with very low frequency (roughly 0.125Hz=8s) and minimum state time of approximately 1s useful for heaters driven by a relay
-  #define PID_FUNCTIONAL_RANGE 15 // If the temperature difference between the target temperature and the actual temperature
+  #define PID_FUNCTIONAL_RANGE 20 // If the temperature difference between the target temperature and the actual temperature
                                   // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 #endif
 
@@ -643,8 +643,8 @@
  * details can be tuned in Configuration_adv.h
  */
 
-//#define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
-//#define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
+#define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
+#define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
 //#define THERMAL_PROTECTION_CHAMBER // Enable thermal protection for the heated chamber
 
 //===========================================================================
@@ -867,7 +867,7 @@
  *   https://blog.kyneticcnc.com/2018/10/computing-junction-deviation-for-marlin.html
  */
 #if DISABLED(CLASSIC_JERK)
-  #define JUNCTION_DEVIATION_MM 0.022 // (mm) Distance from real junction edge
+  #define JUNCTION_DEVIATION_MM 0.020 // (mm) Distance from real junction edge
 #endif
 
 /**
@@ -1086,7 +1086,9 @@
 #define Z_CLEARANCE_MULTI_PROBE     2 // Z Clearance between multiple probes
 #define Z_AFTER_PROBING             2 // Z position after probing is done
 
-#define Z_PROBE_LOW_POINT          -2 //ROBO   Farthest distance below the trigger-point to go before stopping ( -2 accounts for the additional pressure needed to trigger Z endstops)
+#define Z_PROBE_LOW_POINT          -2 //ROBO   Farthest distance below the trigger-point to go before stopping 
+									  // "-2" accounts for the additional pressure needed to trigger Z endstops
+									  // on the floating X gantry
 
 // For M851 give a range for adjusting the Z probe offset
 #define Z_PROBE_OFFSET_RANGE_MIN -5
@@ -1141,7 +1143,7 @@
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
 #define INVERT_X_DIR true //ROBO
-#define INVERT_Y_DIR false //ROBO
+#define INVERT_Y_DIR false //ROBO the bed stepper pins are reversed at the driver compared to xz
 #define INVERT_Z_DIR true //ROBO
 
 // @section extruder
@@ -1449,11 +1451,11 @@
 #define Z_SAFE_HOMING //ROBO
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE) / 2)  // X point for Z homing when homing all axes (G28).
-  #define Z_SAFE_HOMING_Y_POINT ((Y_BED_SIZE) / 3) // ROBO   ((Y_BED_SIZE) / 2)    // Y point for Z homing when homing all axes (G28).
+  #define Z_SAFE_HOMING_Y_POINT 0 // ROBO   ((Y_BED_SIZE) / 2)    // Y point for Z homing when homing all axes (G28).
 #endif
 
 // Homing speeds (mm/m)
-#define HOMING_FEEDRATE_XY (40*60)
+#define HOMING_FEEDRATE_XY (100*60)
 #define HOMING_FEEDRATE_Z  (12*60)
 
 // Validate that endstops are triggered on homing moves
