@@ -867,7 +867,7 @@
  *   https://blog.kyneticcnc.com/2018/10/computing-junction-deviation-for-marlin.html
  */
 #if DISABLED(CLASSIC_JERK)
-  #define JUNCTION_DEVIATION_MM 0.020 // (mm) Distance from real junction edge
+  #define JUNCTION_DEVIATION_MM 0.015 // (mm) Distance from real junction edge
 #endif
 
 /**
